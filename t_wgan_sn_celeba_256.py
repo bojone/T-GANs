@@ -76,6 +76,7 @@ for i in range(4):
 x = GlobalAveragePooling2D()(x)
 
 e_model = Model(x_in, x)
+e_model.summary()
 
 
 # 判别器
