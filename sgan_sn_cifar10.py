@@ -138,7 +138,7 @@ g_train_model.summary()
 
 # 采样函数
 def sample(path):
-    n = 9
+    n = 10
     figure = np.zeros((img_dim * n, img_dim * n, 3))
     for i in range(n):
         for j in range(n):
