@@ -2,6 +2,8 @@
 
 code for <a href="https://arxiv.org/abs/1810.10948">Training Generative Adversarial Networks Via Turing Test</a>
 
+(There may be a delay of arxiv version, please get lastest version <a href="https://github.com/bojone/T-GANs/blob/master/paper%20-%20Training%20Generative%20Adversarial%20Networks%20Via%20Turing%20Test.pdf">here</a>)
+
 <font color="red"><strong>before using the code, you must change the source code of keras !!</strong></font>
 
 `keras/engine/base_layer.py`, replace
