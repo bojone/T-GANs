@@ -1,6 +1,6 @@
 # T-GANs
 
-Training Generative Adversarial Networks Via Turing Test
+code for <a href="https://arxiv.org/abs/1810.10948">Training Generative Adversarial Networks Via Turing Test</a>
 
 <font color="red"><strong>before using the code, you must change the source code of keras !!</strong></font>
 
