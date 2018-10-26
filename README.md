@@ -1,10 +1,12 @@
 # T-GANs
 
-code for <a href="https://arxiv.org/abs/1810.10948">Training Generative Adversarial Networks Via Turing Test</a>
-
+code for <a href="https://arxiv.org/abs/1810.10948">Training Generative Adversarial Networks Via Turing Test</a><br>
 (There may be a delay of arxiv version, please get lastest version <a href="https://github.com/bojone/T-GANs/blob/master/paper%20-%20Training%20Generative%20Adversarial%20Networks%20Via%20Turing%20Test.pdf">here</a>)
 
-<font color="red"><strong>before using the code, you must change the source code of keras !!</strong></font>
+Require: Keras 2.2.0+
+
+<font color="red"><strong>before using the code, you must change the source code of keras !!</strong></font><br>
+(you can run it without changing keras, but the effect will be worse.)
 
 `keras/engine/base_layer.py`, replace
 
