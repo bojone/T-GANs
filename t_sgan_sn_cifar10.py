@@ -178,9 +178,8 @@ def sample(path):
 iters_per_sample = 200
 total_iter = 1000000
 batch_size = 64
-g_train_model.load_weights('./g_train_model.weights')
 
-for i in range(61801, total_iter):
+for i in range(total_iter):
     for j in range(1):
         z_sample = np.random.randn(batch_size, z_dim)
         x_sample = x_train[np.random.choice(len(x_train), size=batch_size)]
