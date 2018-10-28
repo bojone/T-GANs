@@ -5,6 +5,8 @@ code for <a href="https://arxiv.org/abs/1810.10948">Training Generative Adversar
 
 Require: Keras 2.2.0+
 
+the GANs with Turing test can be found <a href="https://github.com/bojone/gan">here</a>.
+
 <font color="red"><strong>before using the code, you must change the source code of keras !!</strong></font><br>
 (you can run it without changing keras, but the effect will be worse.)
 
