@@ -107,7 +107,7 @@ class Attention(Layer):
 # 编码器
 x_in = Input(shape=(img_dim, img_dim, 3))
 x = x_in
-num_channels = 64
+num_channels = 1024 // 2**num_layers
 
 x = ZeroPadding2D()(x)
 x = SpectralNormalization(
@@ -174,7 +174,7 @@ d_model.summary()
 # 生成器
 z_in = Input(shape=(z_dim, ))
 z = z_in
-num_channels = img_dim * 8 # 固定1024好还是目前这样好？
+num_channels = 1024
 
 z = Reshape((1, 1, z_dim))(z)
 z = SpectralNormalization(
@@ -210,7 +210,7 @@ for i in range(num_layers // 2, num_layers):
         Conv2D(num_channels // 2, (3, 3)))(z)
     z = BatchNormalization()(z)
     z = Activation('relu')(z)
-    num_layers = num_layers // 2
+    num_channels //= 2
 
 z = UpSampling2D()(z)
 z = ZeroPadding2D()(z)
