@@ -22,7 +22,7 @@ num_layers = int(np.log2(img_dim)) - 3
 
 
 def imread(f):
-    x = misc.imread(f)
+    x = misc.imread(f, mode='RGB')
     x = misc.imresize(x, (img_dim, img_dim))
     return x.astype(np.float32) / 255 * 2 - 1
 
