@@ -22,7 +22,7 @@ num_layers = int(np.log2(img_dim)) - 3
 
 
 def imread(f):
-    x = misc.imread(f, mode='RGB')
+    x = misc.imread(f)
     x = misc.imresize(x, (img_dim, img_dim))
     return x.astype(np.float32) / 255 * 2 - 1
 
@@ -160,9 +160,6 @@ e_model.summary()
 z_in = Input(shape=(K.int_shape(x)[-1],))
 z = z_in
 
-z = SpectralNormalization(
-    Dense(512))(z)
-z = LeakyReLU(0.2)(z)
 z = SpectralNormalization(
     Dense(1, use_bias=False,
           activation='sigmoid'))(z)
