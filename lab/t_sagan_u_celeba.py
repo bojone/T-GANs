@@ -147,8 +147,7 @@ z_in = Input(shape=(K.int_shape(x)[-1],))
 z = z_in
 
 z = SpectralNormalization(
-    Dense(1, use_bias=False,
-          activation='sigmoid'))(z)
+    Dense(1, use_bias=False))(z)
 
 d_model = Model(z_in, z)
 d_model.summary()
