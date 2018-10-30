@@ -93,3 +93,5 @@ with
             return constraint(weight)
         return weight
 ```  
+
+tensorflow version: https://github.com/TwistedW/tf-T-GANs
