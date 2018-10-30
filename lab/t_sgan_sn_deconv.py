@@ -16,10 +16,10 @@ if not os.path.exists('samples'):
 
 imgs = glob.glob('../CelebA-HQ/train/*.png')
 np.random.shuffle(imgs)
-img_dim = 64
+img_dim = 128
 z_dim = 128
 num_layers = int(np.log2(img_dim)) - 3
-num_channels = img_dim * 8
+max_num_channels = img_dim * 8
 f_size = img_dim // 2**(num_layers + 1)
 
 
@@ -76,6 +76,36 @@ class SpectralNormalization:
         return self.layer(inputs)
 
 
+class Attention(Layer):
+    """Attention层
+    """
+
+    def __init__(self, **kwargs):
+        super(Attention, self).__init__(**kwargs)
+
+    def build(self, input_shape):
+        self.gamma = self.add_weight(name='gamma',
+                                     shape=[1],
+                                     initializer='zeros',
+                                     trainable=True)
+
+    def call(self, inputs):
+        q_in, k_in, v_in = inputs
+        q_shape, k_shape, v_shape = K.shape(q_in), K.shape(k_in), K.shape(v_in)
+        q_in = K.reshape(q_in, (q_shape[0], -1, q_shape[-1]))
+        k_in = K.reshape(k_in, (k_shape[0], -1, k_shape[-1]))
+        v_in = K.reshape(v_in, (v_shape[0], -1, v_shape[-1]))
+        attention = K.batch_dot(q_in, k_in, [2, 2])
+        attention = K.softmax(attention)
+        output = K.batch_dot(attention, v_in, [2, 1])
+        output = K.reshape(output, (q_shape[0], q_shape[1], q_shape[2], v_shape[-1]))
+        return output * self.gamma
+
+    def compute_output_shape(self, input_shape):
+        q_shape, k_shape, v_shape = input_shape
+        return q_shape[:3] + (v_shape[-1],)
+
+
 def log_sigmoid(x):
     return K.log(K.sigmoid(x) + K.epsilon())
 
@@ -85,14 +115,17 @@ x_in = Input(shape=(img_dim, img_dim, 3))
 x = x_in
 
 for i in range(num_layers + 1):
+    num_channels = max_num_channels // 2**(num_layers - i)
     x = SpectralNormalization(
-        Conv2D(num_channels // 2**(num_layers - i),
-               (5, 5),
+        Conv2D(num_channels,
+               (4, 4),
                strides=(2, 2),
+               use_bias=False,
                padding='same'))(x)
-    x = SpectralNormalization(
-        BatchNormalization())(x)
-    x = LeakyReLU()(x)
+    if i > 0:
+        x = SpectralNormalization(
+            BatchNormalization())(x)
+    x = LeakyReLU(0.2)(x)
 
 x = GlobalAveragePooling2D()(x)
 
@@ -105,8 +138,8 @@ z_in = Input(shape=(K.int_shape(x)[-1],))
 z = z_in
 
 z = SpectralNormalization(
-    Dense(512))(z)
-z = LeakyReLU()(z)
+    Dense(512, use_bias=False))(z)
+z = LeakyReLU(0.2)(z)
 z = SpectralNormalization(
     Dense(1, use_bias=False))(z)
 
@@ -118,21 +151,22 @@ d_model.summary()
 z_in = Input(shape=(z_dim, ))
 z = z_in
 
-z = Dense(f_size**2 * num_channels)(z)
+z = Dense(f_size**2 * max_num_channels)(z)
 z = BatchNormalization()(z)
 z = Activation('relu')(z)
-z = Reshape((f_size, f_size, num_channels))(z)
+z = Reshape((f_size, f_size, max_num_channels))(z)
 
 for i in range(num_layers):
-    z = Conv2DTranspose(num_channels // 2**(i + 1),
-                        (5, 5),
+    num_channels = max_num_channels // 2**(i + 1)
+    z = Conv2DTranspose(num_channels,
+                        (4, 4),
                         strides=(2, 2),
                         padding='same')(z)
     z = BatchNormalization()(z)
     z = Activation('relu')(z)
 
 z = Conv2DTranspose(3,
-                    (5, 5),
+                    (4, 4),
                     strides=(2, 2),
                     padding='same')(z)
 z = Activation('tanh')(z)
@@ -178,7 +212,7 @@ x_fake_real_score = d_model(x_fake_real)
 g_train_model = Model([x_in, z_in],
                       [x_real_fake_score, x_fake_real_score])
 
-g_loss = K.mean(- log_sigmoid(- x_real_fake_score) - log_sigmoid(x_fake_real_score))
+g_loss = K.mean(- log_sigmoid(x_fake_real_score) - log_sigmoid(- x_real_fake_score))
 g_train_model.add_loss(g_loss)
 g_train_model.compile(optimizer=Adam(2e-4, 0.5))
 
