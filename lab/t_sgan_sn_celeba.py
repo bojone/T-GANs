@@ -108,8 +108,7 @@ z = SpectralNormalization(
     Dense(512))(z)
 z = LeakyReLU()(z)
 z = SpectralNormalization(
-    Dense(1, use_bias=False,
-          activation='sigmoid'))(z)
+    Dense(1, use_bias=False))(z)
 
 d_model = Model(z_in, z)
 d_model.summary()
