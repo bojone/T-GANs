@@ -106,6 +106,10 @@ class Attention(Layer):
         return q_shape[:3] + (v_shape[-1],)
 
 
+def log_sigmoid(x):
+    return K.log(K.sigmoid(x) + K.epsilon())
+
+
 # 编码器
 x_in = Input(shape=(img_dim, img_dim, 3))
 x = x_in
@@ -200,7 +204,7 @@ x_fake_real_score = d_model(x_fake_real)
 d_train_model = Model([x_in, z_in],
                       [x_real_fake_score, x_fake_real_score])
 
-d_loss = K.mean(- K.log(x_real_fake_score + 1e-9) - K.log(1 - x_fake_real_score + 1e-9))
+d_loss = K.mean(- log_sigmoid(x_real_fake_score) - log_sigmoid(1 - x_fake_real_score))
 d_train_model.add_loss(d_loss)
 d_train_model.compile(optimizer=Adam(2e-4, 0.5))
 
@@ -221,7 +225,7 @@ x_fake_real_score = d_model(x_fake_real)
 g_train_model = Model([x_in, z_in],
                       [x_real_fake_score, x_fake_real_score])
 
-g_loss = K.mean(- K.log(1 - x_real_fake_score + 1e-9) - K.log(x_fake_real_score + 1e-9))
+g_loss = K.mean(- log_sigmoid(1 - x_real_fake_score) - log_sigmoid(x_fake_real_score))
 g_train_model.add_loss(g_loss)
 g_train_model.compile(optimizer=Adam(2e-4, 0.5))
 
