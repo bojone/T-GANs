@@ -94,4 +94,6 @@ with
         return weight
 ```  
 
+<h2>other platforms</h2>
+
 tensorflow version: https://github.com/TwistedW/tf-T-GANs
