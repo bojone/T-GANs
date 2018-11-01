@@ -124,7 +124,7 @@ x_fake_score = d_model(x_fake)
 
 g_train_model = Model(z_in, x_fake_score)
 
-g_loss = K.mean(- x_fake_score)
+g_loss = K.mean(log_sigmoid(- x_fake_score))
 g_train_model.add_loss(g_loss)
 g_train_model.compile(optimizer=Adam(2e-4, 0.5))
 
@@ -155,7 +155,7 @@ total_iter = 1000000
 img_generator = data_generator(batch_size)
 
 for i in range(total_iter):
-    for j in range(4):
+    for j in range(2):
         z_sample = np.random.randn(batch_size, z_dim)
         d_loss = d_train_model.train_on_batch(
             [img_generator.next(), z_sample], None)
