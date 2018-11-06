@@ -84,7 +84,7 @@ def log_sigmoid(x):
     return - K.softplus(- x)
 
 
-# 判别器
+# 编码器
 x_in = Input(shape=(img_dim, img_dim, 3))
 x = x_in
 
