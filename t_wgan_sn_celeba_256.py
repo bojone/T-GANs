@@ -86,8 +86,7 @@ z = z_in
 z = Dense(512, kernel_constraint=spectral_normalization)(z)
 z = LeakyReLU()(z)
 z = Dense(1, use_bias=False,
-          kernel_constraint=spectral_normalization,
-          activation='sigmoid')(z)
+          kernel_constraint=spectral_normalization)(z)
 
 d_model = Model(z_in, z)
 d_model.summary()
