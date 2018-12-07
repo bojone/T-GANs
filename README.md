@@ -97,3 +97,4 @@ with
 <h2>other platforms</h2>
 
 tensorflow version: https://github.com/TwistedW/tf-T-GANs
+pytorch version: https://github.com/rahulbhalley/turing-gan.pytorch
